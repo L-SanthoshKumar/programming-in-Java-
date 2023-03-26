@@ -1,0 +1,42 @@
+import java.net.*;
+import java.io.*;
+
+public class Server {
+    public static void main(String[] args) throws IOException {
+        ServerSocket serverSocket = null;
+
+        try {
+            // create a server socket listening on port 1234
+            serverSocket = new ServerSocket(1234);
+        } catch (IOException e) {
+            System.err.println("Could not listen on port: 1234");
+            System.exit(1);
+        }
+
+        Socket clientSocket = null;
+
+        try {
+            System.out.println("Waiting for connection...");
+            clientSocket = serverSocket.accept();
+            System.out.println("Connection established: " + clientSocket);
+        } catch (IOException e) {
+            System.err.println("Accept failed.");
+            System.exit(1);
+        }
+
+        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+        String inputLine;
+
+        while ((inputLine = in.readLine()) != null) {
+            System.out.println("Received message from client: " + inputLine);
+            out.println("Echoing back: " + inputLine);
+        }
+
+        out.close();
+        in.close();
+        clientSocket.close();
+        serverSocket.close();
+    }
+}
